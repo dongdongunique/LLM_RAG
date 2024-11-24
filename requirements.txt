@@ -4,3 +4,4 @@ faiss-cpu
 python-dotenv
 pandas
 langchain-community
+tiktoken

@@ -10,7 +10,7 @@ class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
     # Document settings
-    DOCUMENTS_DIRECTORY = "documents"
+    DOCUMENTS_DIRECTORY = "./"
     FILE_EXTENSION = ".csv"
     ENCODING = "utf-8"
 

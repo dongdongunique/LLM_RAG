@@ -29,7 +29,9 @@ def main():
     # Initialize embeddings
     from langchain.embeddings import OpenAIEmbeddings
     embeddings = OpenAIEmbeddings(openai_api_key=Config.OPENAI_API_KEY)
-
+    print("Initialized OpenAI embeddings.")
+    #show the embeddings' shape
+    print(f"Embeddings shape: {embeddings.embeddings.shape}")
     # Create vector store
     print("Creating/loading vector store...")
     if Config.VECTOR_STORE_TYPE == "FAISS":
