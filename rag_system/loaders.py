@@ -4,7 +4,7 @@ import os
 import pandas as pd
 from abc import ABC, abstractmethod
 from typing import List, Dict
-
+import datasets
 class BaseDocumentLoader(ABC):
     @abstractmethod
     def load(self) -> List[Dict]:
@@ -35,7 +35,22 @@ class CSVLoader(BaseDocumentLoader):
             )
             documents.append(document)
         return documents
+# class AmazonProductLoader(BaseDocumentLoader):
+#     def load(self) -> List[Dict]:
+#         try:
+#             df = 
+#         except Exception as e:
+#             raise ValueError(f"Error reading CSV file: {e}")
 
+#         documents = []
+#         for index, row in df.iterrows():
+#             row_text = ' | '.join([f"{col}: {row[col]}" for col in df.columns if pd.notna(row[col]) and isinstance(row[col], str)])
+#             document = Document(
+#                 page_content=row_text,
+#                 metadata={"source": self.file_path, "row": index}
+#             )
+#             documents.append(document)
+#         return documents
 def load_documents(directory_path: str, file_extension: str, encoding: str) -> List[Document]:
     documents = []
     for root, dirs, files in os.walk(directory_path):
