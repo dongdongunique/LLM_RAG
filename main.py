@@ -16,7 +16,7 @@ def main():
         Config.ENCODING
     )
     print(f"Loaded {len(documents)} documents.")
-
+    #print(f"Example document: {documents['page_contents']}")
     # Split documents into chunks
     print("Splitting documents into chunks...")
     split_docs = split_documents(
@@ -31,7 +31,7 @@ def main():
     embeddings = OpenAIEmbeddings(openai_api_key=Config.OPENAI_API_KEY)
     print("Initialized OpenAI embeddings.")
     #show the embeddings' shape
-    print(f"Embeddings shape: {embeddings.embeddings.shape}")
+    #print(f"Embeddings shape: {embeddings.embeddings.shape}")
     # Create vector store
     print("Creating/loading vector store...")
     if Config.VECTOR_STORE_TYPE == "FAISS":

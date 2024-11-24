@@ -10,12 +10,17 @@ class BaseDocumentLoader(ABC):
     def load(self) -> List[Dict]:
         pass
 
+class Document:
+    def __init__(self, page_content: str, metadata: Dict):
+        self.page_content = page_content
+        self.metadata = metadata
+
 class CSVLoader(BaseDocumentLoader):
     def __init__(self, file_path: str, encoding: str = "utf-8"):
         self.file_path = file_path
         self.encoding = encoding
 
-    def load(self) -> List[Dict]:
+    def load(self) -> List[Document]:
         try:
             df = pd.read_csv(self.file_path, encoding=self.encoding)
         except Exception as e:
@@ -23,14 +28,15 @@ class CSVLoader(BaseDocumentLoader):
 
         documents = []
         for index, row in df.iterrows():
-            row_text = ' | '.join([f"{col}: {row[col]}" for col in df.columns if pd.notna(row[col]) and isinstance(row[col], str) ])
-            documents.append({
-                "page_content": row_text,
-                "metadata": {"source": self.file_path, "row": index}
-            })
+            row_text = ' | '.join([f"{col}: {row[col]}" for col in df.columns if pd.notna(row[col]) and isinstance(row[col], str)])
+            document = Document(
+                page_content=row_text,
+                metadata={"source": self.file_path, "row": index}
+            )
+            documents.append(document)
         return documents
 
-def load_documents(directory_path: str, file_extension: str, encoding: str) -> List[Dict]:
+def load_documents(directory_path: str, file_extension: str, encoding: str) -> List[Document]:
     documents = []
     for root, dirs, files in os.walk(directory_path):
         for file in files:

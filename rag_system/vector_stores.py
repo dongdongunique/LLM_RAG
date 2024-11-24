@@ -4,7 +4,7 @@ import os
 from abc import ABC, abstractmethod
 from typing import List, Dict
 from langchain.embeddings.base import Embeddings
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 
 class BaseVectorStore(ABC):
     @abstractmethod
