@@ -8,6 +8,8 @@ from rag_system.llms import OpenAILLM  # Adjust when adding new LLMs
 from rag_system.utils import split_documents
 
 def main():
+    os.environ["http_proxy"] = "http://localhost:7890"
+    os.environ["https_proxy"] = "http://localhost:7890"
     # Load documents
     print("Loading documents...")
     documents = load_documents(
@@ -34,8 +36,8 @@ def main():
     #print(f"Embeddings shape: {embeddings.embeddings.shape}")
     # Create vector store
     print("Creating/loading vector store...")
-    if Config.VECTOR_STORE_TYPE == "FAISS":
-        vector_store = FAISSVectorStore(embeddings, Config.VECTOR_STORE_INDEX_PATH)
+    if Config.VECTOR_STORE_TYPE in ["Flat", "IVF", "HNSW", "HNSWSQ", "IVFPQ"]:
+        vector_store = FAISSVectorStore(embeddings, Config.VECTOR_STORE_INDEX_PATH, index_type=Config.VECTOR_STORE_TYPE, num_clusters=Config.NUM_CLUSTERS)
     else:
         raise ValueError(f"Unsupported vector store type: {Config.VECTOR_STORE_TYPE}")
 
