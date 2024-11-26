@@ -1,6 +1,6 @@
 * **Query for WiFi Extenders:**
 
-  * "Find WiFi range extenders."
+  * "Find WiFi range extenders with 4 stars"
 * **Query for Art Supplies:**
 
   * "List all art supplies, specifically focusing on pom poms, with a price under $10."
