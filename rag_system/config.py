@@ -15,7 +15,8 @@ class Config:
     ENCODING = "utf-8"
 
     # Vector store settings
-    VECTOR_STORE_TYPE = "FAISS"  # Options: FAISS, Pinecone, Weaviate, etc.
+    VECTOR_STORE_TYPE = "Flat"  # Options: Flat / IVF / HNSW / HNSWSQ / IVFPQ
+    NUM_CLUSTERS = 100
     VECTOR_STORE_INDEX_PATH = "vector_store_index"
 
     # LLM settings
