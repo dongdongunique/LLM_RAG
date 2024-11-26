@@ -28,7 +28,7 @@ class CSVLoader(BaseDocumentLoader):
 
         documents = []
         for index, row in df.iterrows():
-            row_text = ' | '.join([f"{col}: {row[col]}" for col in df.columns if pd.notna(row[col]) and isinstance(row[col], str)])
+            row_text = ' | '.join([f"{col}: {row[col]}" for col in df.columns if pd.notna(row[col])])
             document = Document(
                 page_content=row_text,
                 metadata={"source": self.file_path, "row": index}

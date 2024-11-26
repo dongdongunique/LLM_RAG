@@ -6,7 +6,7 @@ from rag_system.loaders import load_documents
 from rag_system.vector_stores import FAISSVectorStore  # Adjust when adding new vector stores
 from rag_system.llms import OpenAILLM  # Adjust when adding new LLMs
 from rag_system.utils import split_documents
-
+import os 
 def main():
     os.environ["http_proxy"] = "http://localhost:7890"
     os.environ["https_proxy"] = "http://localhost:7890"
