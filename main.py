@@ -67,7 +67,7 @@ def main():
         if query.lower() in ["exit", "quit"]:
             print("Exiting the Q&A session.")
             break
-        response = qa_chain(query)
+        response = qa_chain.invoke(query)
         answer = response['result']
         source_docs = response['source_documents']
 
