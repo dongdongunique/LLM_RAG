@@ -1,22 +1,31 @@
 # **RAG System with FAISS and GPT**
 
-This repository implements a **Retrieval-Augmented Generation (RAG)** system using **FAISS** for vector-based retrieval and **GPT** for generative response. It is designed to process large datasets, index them with FAISS, and use GPT to answer queries with retrieved context.
+This repository implements a **Retrieval-Augmented Generation (RAG)** system using **FAISS** for vector-based retrieval and **GPT** for generative response. It is designed to process large datasets, index them with FAISS, and use GPT to answer queries with context retrieved from the documents.
 
 ## **Features**
 
-* **Document Loading** : Load and preprocess datasets (e.g., CSV, plain text).
-* **Embedding Generation** : Convert documents and queries into vector embeddings.
-* **Efficient Retrieval** : Use FAISS for similarity search over large corpora.
-* **GPT Integration** : Generate answers using GPT with context from retrieved documents.
-* **Modular Design** : Easily extend the system with new vector stores, LLMs, or document loaders.
+- **Document Loading**: Load and preprocess datasets (e.g., CSV, plain text).
+- **Embedding Generation**: Convert documents and queries into vector embeddings.
+- **Efficient Retrieval**: Use FAISS for similarity search over large corpora.
+- **GPT Integration**: Generate answers using GPT with context from retrieved documents.
+- **Modular Design**: Easily extend the system with new vector stores, LLMs, or document loaders.
+- **Interactive User Interface**: A Gradio-powered UI for easy interaction with the system. Supports:
+  - Uploading and viewing CSV files.
+  - Searching the indexed documents.
+  - Managing document chunks.
+  - Interacting with the system through intuitive input fields.
+- **CRUD Operations**: Add, delete, update, and query document chunks in real-time.
+
+---
 
 ## **Installation**
 
 ### **Requirements**
 
-* Python 3.8 or higher
-* FAISS
-* OpenAI API Key
+- Python 3.8 or higher
+- FAISS
+- OpenAI API Key
+- Gradio (for the UI)
 
 ### **Dependencies**
 
@@ -28,7 +37,7 @@ pip install -U -r requirements.txt
 
 **`requirements.txt`:**
 
-```
+```plaintext
 langchain
 openai
 faiss-cpu
@@ -53,26 +62,32 @@ OPENAI_API_KEY=your_openai_api_key
 
 ### **2. Prepare Your Dataset**
 
-* Place your documents in the `documents` directory.
-* Supported formats: CSV, plain text, and others (easily extendable).
+- Use the provided example dataset (`amazon_products.csv`) or upload your own CSV dataset.
+- Ensure the dataset contains a column with text-based content (e.g., `description`) to generate embeddings.
 
 ### **3. Run the System**
 
-Execute the main script:
+You can run the system in two modes:
+
+#### **Command-Line Interface (CLI)**
+
+Run the system interactively via CLI:
 
 ```bash
 python main.py
 ```
 
-### **4. Ask Questions**
+This mode allows you to interact with the RAG system by asking questions and retrieving answers.
 
-Once the system is running, interact with it by typing your questions. For example:
+#### **Gradio User Interface**
 
-```plaintext
-Your question: What is the best way to handle data processing?
+Run the system with the Gradio-powered UI:
 
-Answer: The best way to handle data processing is...
+```bash
+python app.py
 ```
+
+This launches a web-based interface for uploading datasets, managing document chunks, and querying the RAG system.
 
 ---
 
@@ -80,19 +95,53 @@ Answer: The best way to handle data processing is...
 
 ```plaintext
 .
-├── documents/               # Directory for your dataset
-├── rag_system/              # Main source code
+├── amazon_products.csv       # Example dataset for testing
+├── app.py                    # Gradio-based user interface
+├── app.log                   # Log file for application events
+├── dataset_cache.ipynb       # Notebook for dataset caching or analysis
+├── main.py                   # CLI entry point for the RAG system
+├── rag_system/               # Main source code for the RAG system
 │   ├── __init__.py
-│   ├── config.py            # Configuration settings
-│   ├── loaders.py           # Document loading and preprocessing
-│   ├── vector_stores.py     # FAISS and other vector store implementations
-│   ├── llms.py              # LLM integrations (e.g., OpenAI, HuggingFace)
-│   ├── utils.py             # Helper utilities
-│   └── main.py              # Entry point for the system
-├── .env                     # Environment variables
-├── requirements.txt         # Python dependencies
-└── README.md                # Documentation (this file)
+│   ├── config.py             # Configuration settings (API keys, paths, etc.)
+│   ├── core.py               # Core logic for RAG system initialization
+│   ├── loaders.py            # Document loading and preprocessing
+│   ├── llms.py               # Integration with GPT or other LLMs
+│   ├── utils.py              # Utility functions (e.g., splitting documents)
+│   ├── vector_stores.py      # FAISS and other vector store implementations
+├── vector_store_index/       # Directory for storing FAISS index files
+├── requirements.txt          # Python dependencies
+├── SearchQ.md                # Markdown for documenting queries or use cases
+├── README.md                 # Project documentation (this file)
+├── .env                      # Environment variables for API keys
 ```
+
+---
+
+## **Gradio User Interface**
+
+The Gradio UI provides an intuitive interface for interacting with the RAG system. It supports:
+
+1. **Upload CSV Files**:
+   - Upload datasets containing documents for indexing.
+   - Automatically preprocesses and splits documents into chunks for embedding generation.
+
+2. **Search Documents**:
+   - Enter natural language queries in the search box.
+   - The system retrieves the most relevant documents and generates a response using GPT.
+
+3. **CRUD Operations**:
+   - Add new document chunks to the indexed dataset.
+   - Delete or update existing chunks based on specific criteria.
+
+### **Starting the Gradio Interface**
+
+Run the Gradio UI with:
+
+```bash
+python app.py
+```
+
+After launching, open the provided URL in a web browser to interact with the system.
 
 ---
 
@@ -100,34 +149,48 @@ Answer: The best way to handle data processing is...
 
 ### **1. Vector Store**
 
-The system currently uses **FAISS** for vector-based retrieval. To use another vector database (e.g., Pinecone, Weaviate, Milvus):
+The system uses **FAISS** for vector-based retrieval by default. To integrate another vector database (e.g., Pinecone, Weaviate, Milvus):
 
-1. Add a new class in `rag_system/vector_stores.py` inheriting from `BaseVectorStore`.
-2. Update `Config.VECTOR_STORE_TYPE` in `config.py`.
+1. Create a new class in `rag_system/vector_stores.py` inheriting from `BaseVectorStore`.
+2. Update the `Config.VECTOR_STORE_TYPE` in `config.py`.
 
 ### **2. LLM**
 
-The system integrates with **OpenAI GPT** by default. To use another LLM (e.g., HuggingFace models):
+The system integrates with **OpenAI GPT**. To switch to another LLM (e.g., HuggingFace models):
 
 1. Add a new class in `rag_system/llms.py` inheriting from `BaseLLM`.
 2. Update `Config.LLM_TYPE` in `config.py`.
 
 ### **3. Document Loaders**
 
-The system supports CSV and plain text files. To add support for other formats (e.g., PDFs, JSON):
+To support additional formats (e.g., PDFs, JSON):
 
 1. Add a new class in `rag_system/loaders.py` inheriting from `BaseDocumentLoader`.
-2. Modify the `load_documents` function to detect and handle the new format.
+2. Update the `load_documents` function to detect and handle the new format.
+
+### **4. Gradio UI**
+
+The UI is modular and can be extended. To add new components:
+
+1. Modify `app.py` to include new Gradio widgets.
+2. Update the callback functions to handle the added functionality.
+
+---
+
+## **Logging**
+
+The system logs important events (e.g., errors, indexing operations) in `app.log`. Check this file for debugging or monitoring purposes.
 
 ---
 
 ## **Future Improvements**
 
-* **Scalable Vector Stores** : Add support for distributed databases like Pinecone or Weaviate.
-* **Enhanced Query Handling** : Implement advanced query parsing and relevance ranking.
-* **Fine-tuned Models** : Integrate domain-specific LLMs for improved performance.
-* **Web Interface** : Build a frontend using Streamlit or Flask for user-friendly interaction.
-* **Batch Processing** : Optimize retrieval and generation for bulk queries.
+- **Distributed Vector Stores**: Add support for scalable vector stores like Pinecone or Weaviate.
+- **Advanced Query Features**: Implement query expansion, semantic search, and ranking.
+- **Custom Embeddings**: Allow users to upload precomputed embeddings.
+- **User Authentication**: Add authentication and access control for the Gradio interface.
+- **Visualization**: Display results with data visualizations (e.g., charts for document relevance scores).
+- **Batch Processing**: Optimize retrieval and generation for bulk queries.
 
 ---
 
@@ -143,12 +206,13 @@ Contributions are welcome! To contribute:
 
 ## **License**
 
-This project is licensed under the [MIT License](https://chatgpt.com/c/LICENSE).
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 ---
 
 ## **Acknowledgments**
 
-* [FAISS](https://github.com/facebookresearch/faiss) for efficient similarity search.
-* [OpenAI](https://openai.com/) for their powerful embedding and generative APIs.
-* [LangChain](https://langchain.readthedocs.io/) for providing a robust framework for LLM applications.
+- [FAISS](https://github.com/facebookresearch/faiss): Efficient similarity search.
+- [OpenAI](https://openai.com/): Embedding and generative APIs.
+- [LangChain](https://langchain.readthedocs.io/): Framework for building applications with LLMs.
+- [Gradio](https://gradio.app/): User-friendly interface for ML applications.
