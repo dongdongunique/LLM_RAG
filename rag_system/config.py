@@ -8,6 +8,9 @@ load_dotenv()
 class Config:
     # OpenAI API Key
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    BASE_URL = os.getenv("BASE_URL")
+    DEEP_SEEK_KEY = os.getenv("DEEP_SEEK_KEY")
+
 
     # Document settings
     DOCUMENTS_DIRECTORY = "./"

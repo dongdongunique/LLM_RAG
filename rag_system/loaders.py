@@ -53,12 +53,20 @@ class CSVLoader(BaseDocumentLoader):
 #         return documents
 def load_documents(directory_path: str, file_extension: str, encoding: str) -> List[Document]:
     documents = []
-    for root, dirs, files in os.walk(directory_path):
-        for file in files:
-            if file.endswith(file_extension):
-                file_path = os.path.join(root, file)
-                print(f"Loading file: {file_path}")
-                loader = CSVLoader(file_path, encoding)  # Replace with appropriate loader
-                docs = loader.load()
-                documents.extend(docs)
-    return documents
+    #if directory_path ends with file_extension, then load the file
+    if directory_path.endswith(file_extension):
+        print(f"Loading file: {directory_path}")
+        loader = CSVLoader(directory_path, encoding)  # Replace with appropriate loader
+        docs = loader.load()
+        documents.extend(docs)
+        return documents
+    else:
+        for root, dirs, files in os.walk(directory_path):
+            for file in files:
+                if file.endswith(file_extension):
+                    file_path = os.path.join(root, file)
+                    print(f"Loading file: {file_path}")
+                    loader = CSVLoader(file_path, encoding)  # Replace with appropriate loader
+                    docs = loader.load()
+                    documents.extend(docs)
+        return documents

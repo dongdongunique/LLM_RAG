@@ -6,3 +6,4 @@ python-dotenv
 pandas
 langchain-community
 tiktoken
+gradio
