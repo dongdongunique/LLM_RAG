@@ -97,65 +97,87 @@ def update_record(criteria, new_values):
         return "记录已成功更新。"
     except Exception as e:
         return f"更新记录时出错: {str(e)}"
+
+# 核心 UI 构建
 os.environ["no_proxy"] = "localhost,127.0.0.1,::1"
 with gr.Blocks() as demo:
-    gr.Markdown("# LLM + RAG 数据库管理界面")
-    
-    with gr.Tab("上传CSV文件"):
+    # 顶栏样式
+    gr.HTML("""
+    <style>
+        #header {
+            background: linear-gradient(90deg, #4CAF50, #008CBA);  /* 渐变色 */
+            padding: 10px 0;
+            text-align: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* 阴影效果 */
+        }
+        
+    </style>
+    """)
+
+    # 顶栏
+    gr.Markdown("<div id='header'>LLM + RAG 数据库管理界面</div>", elem_id="header")
+
+    # 上传 CSV Tab
+    with gr.Tab("上传csv文件", elem_id="tab-upload"):
         with gr.Row():
-            csv_upload = gr.File(label="上传CSV文件", file_types=["csv"])
-            index_choice = gr.Radio(choices=["Flat", "IVF", "HNSW", "IVFPQ"], label="选择索引类型", value=Config.VECTOR_STORE_TYPE)
-            num_clusters = gr.Number(label="聚类数（仅IVF有效）", value=Config.NUM_CLUSTERS)
-        upload_button = gr.Button("上传并更新向量存储")
-        upload_status = gr.Textbox(label="状态", interactive=False)
+            csv_upload = gr.File(label="上传CSV文件", file_types=["csv"], elem_id="csv-upload")
+            index_choice = gr.Radio(choices=["Flat", "IVF", "HNSW", "IVFPQ"], label="选择索引类型", value=Config.VECTOR_STORE_TYPE, elem_id="index-choice")
+            num_clusters = gr.Number(label="聚类数（仅IVF有效）", value=Config.NUM_CLUSTERS, elem_id="num-clusters")
+        upload_button = gr.Button("上传并更新向量存储", variant="primary", elem_id="upload-button")
+        upload_status = gr.Textbox(label="状态", interactive=False, elem_id="upload-status")
         upload_button.click(upload_csv_and_update, inputs=[csv_upload, index_choice, num_clusters], outputs=[upload_status, gr.State(), gr.State()])
-    
-    with gr.Tab("执行查询"):
+
+    # 执行查询 Tab
+    with gr.Tab("执行查询", elem_id="tab-query"):
         with gr.Row():
-            query_input = gr.Textbox(label="输入查询", placeholder="请输入您的问题...")
-            query_button = gr.Button("执行查询")
-        query_output = gr.Textbox(label="回答", interactive=False)
-        source_output = gr.Textbox(label="相关文档来源", interactive=False)
+            query_input = gr.Textbox(label="输入查询", placeholder="请输入您的问题...", elem_id="query-input")
+            query_button = gr.Button("执行查询", variant="primary", elem_id="query-button")
+        query_output = gr.Textbox(label="回答", interactive=False, elem_id="query-output")
+        source_output = gr.Textbox(label="相关文档来源", interactive=False, elem_id="source-output")
         query_button.click(perform_query, inputs=query_input, outputs=[query_output, source_output])
-    
-    with gr.Tab("增删改查"):
+
+    # CRUD 操作 Tab
+    with gr.Tab("增删改查", elem_id="tab-crud"):
         with gr.Accordion("添加记录", open=False):
             with gr.Column():
-                # 根据实际数据集调整字段
-                
-                id_input = gr.Textbox(label="ID")
-                date_inpu = gr.Textbox(label="日期")
-                title_input = gr.Textbox(label="标题")
-                description_input = gr.Textbox(label="描述")
-                name_input = gr.Textbox(label="名称")
-                main_categories_input = gr.Textbox(label="主要类别")
-                categories_input = gr.Textbox(label="类别")
-                store_input = gr.Textbox(label="商店")
-                ave_rating_input = gr.Textbox(label="平均评分")
-                rating_num_input = gr.Textbox(label="评分数量")
-                price_input = gr.Textbox(label="价格")
-                add_button = gr.Button("添加记录")
+                id_input = gr.Textbox(label="ID", elem_id="id-input")
+                date_inpu = gr.Textbox(label="日期", elem_id="date-input")
+                title_input = gr.Textbox(label="标题", elem_id="title-input")
+                description_input = gr.Textbox(label="描述", elem_id="description-input")
+                name_input = gr.Textbox(label="名称", elem_id="name-input")
+                main_categories_input = gr.Textbox(label="主要类别", elem_id="main-category-input")
+                categories_input = gr.Textbox(label="类别", elem_id="category-input")
+                store_input = gr.Textbox(label="商店", elem_id="store-input")
+                ave_rating_input = gr.Textbox(label="平均评分", elem_id="rating-input")
+                rating_num_input = gr.Textbox(label="评分数量", elem_id="rating-num-input")
+                price_input = gr.Textbox(label="价格", elem_id="price-input")
+                add_button = gr.Button("添加记录", variant="primary", elem_id="add-record-button")
                 add_status = gr.Textbox(label="状态", interactive=False)
                 add_button.click(add_record, inputs=[id_input, date_inpu, title_input, description_input, name_input, main_categories_input, categories_input, store_input, ave_rating_input, rating_num_input, price_input], outputs=add_status)
         
         with gr.Accordion("删除记录", open=False):
             with gr.Column():
-                criteria_input = gr.Textbox(label="删除条件（例如: id=123）")
-                delete_button = gr.Button("删除记录")
+                criteria_input = gr.Textbox(label="删除条件（例如: id=123）", elem_id="criteria-input")
+                delete_button = gr.Button("删除记录", variant="secondary", elem_id="delete-record-button")
                 delete_status = gr.Textbox(label="状态", interactive=False)
                 delete_button.click(delete_record, inputs=criteria_input, outputs=delete_status)
         
         with gr.Accordion("更新记录", open=False):
             with gr.Column():
-                criteria_update = gr.Textbox(label="更新条件（例如: id=123）")
-                new_values_input = gr.Textbox(label="新值（例如: price=99.99）")
-                update_button = gr.Button("更新记录")
+                criteria_update = gr.Textbox(label="更新条件（例如: id=123）", elem_id="update-criteria-input")
+                new_values_input = gr.Textbox(label="新值（例如: price=99.99）", elem_id="update-values-input")
+                update_button = gr.Button("更新记录", variant="tertiary", elem_id="update-record-button")
                 update_status = gr.Textbox(label="状态", interactive=False)
                 update_button.click(update_record, inputs=[criteria_update, new_values_input], outputs=update_status)
 
+    # 最后展示注意事项
     gr.Markdown("""
     ---
     **注意**：CRUD 操作需要在 `RAGSystem` 类中实现具体的逻辑。本示例仅提供接口框架，请根据实际需求补充 `delete_documents` 和 `update_documents` 方法的实现。
     """)
 
-demo.launch(debug=True,share=False, server_port=8600)
+# 启动应用
+demo.launch(debug=True, share=False, server_port=8600)
