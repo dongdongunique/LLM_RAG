@@ -20,6 +20,7 @@ class RAGSystem:
         self.vector_store = None
         self.llm = None
         self.qa_chain = None
+        self.total_num = 0
 
     def load_and_prepare_documents(self):
         print("Loading documents...")
@@ -96,6 +97,7 @@ class RAGSystem:
     def add_documents(self, new_documents):
         # 假设 new_documents 是一个字典列表，每个字典代表一行数据
         self.documents.extend(new_documents)
+        self.total_num = len(self.documents)/2
         self.split_docs = split_documents(
             self.documents,
             Config.CHUNK_SIZE,
@@ -104,6 +106,22 @@ class RAGSystem:
         self.vector_store.index_documents(self.split_docs)
         print(f"Added {len(new_documents)} new documents.")
 
+    def check_exit(self, document, field):
+        # 将 page_content 解析成字典
+        content_dict = {}
+        for item in document.page_content.split(" | "):
+            parts = item.split(": ", 1)  # 使用 maxsplit=1 确保最多分割一次
+            if len(parts) == 2:  # 确保拆分后的结果有两个元素
+                key, value = parts
+                content_dict[key] = value
+            else:
+                content_dict[key] = None
+
+        # 访问指定列的值
+        target_column = field
+        target_value = content_dict.get(target_column, None)  # 如果不存在，返回 None
+        return target_value
+    
     def delete_documents(self, criteria):
         """
         根据给定的条件删除文档。
@@ -111,10 +129,12 @@ class RAGSystem:
         """
         try:
             field, value = criteria.split('=')
+            if field == "id" or field == "ID":
+                field = "parent_asin"
             field = field.strip()
             value = value.strip()
             # 过滤文档
-            self.documents = [doc for doc in self.documents if str(doc.get(field)) != value]
+            self.documents = [doc for doc in self.documents if self.check_exit(doc, field) != value]
             # 重新拆分文档
             self.split_docs = split_documents(
                 self.documents,
