@@ -1,4 +1,4 @@
-# **RAG System with FAISS and GPT**
+# **RAG System with FAISS and GPT** (Homework for Advanced Database)
 
 This repository implements a **Retrieval-Augmented Generation (RAG)** system using **FAISS** for vector-based retrieval and **GPT** for generative response. It is designed to process large datasets, index them with FAISS, and use GPT to answer queries with context retrieved from the documents.
 
